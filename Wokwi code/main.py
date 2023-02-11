@@ -8,6 +8,7 @@ from machine import Pin, SoftI2C
 import network, time
 
 
+ 
 
 #Button part
 led = Pin(12, Pin.OUT)    # 22 number in is Output
@@ -25,6 +26,7 @@ i2c = SoftI2C(scl=Pin(22), sda=Pin(21), freq=10000)
 #Accelerometer Part
 mpu= mpu6050.accel(i2c)
 initveloc=0
+speed= 0 
 #Accelerometer Part
 
 #LCD initialization Part
@@ -69,39 +71,41 @@ while True:
     distance = sensor.distance_cm()
     mpuval=mpu.get_values()
     acc=mpuval["AcX"]/16384
+    speed = initveloc + (((time.ticks_ms()- last_update)/100)*acc)
     if(distance>100):
       led.value(1)
-      lcd.putstr("Obstacle at {}m\nReduce speed".format(int(distance/100)))
+      lcd.putstr("Obstacle at {}m  \nReduce speed".format(int(distance/100)))
       sleep(1)
       lcd.clear()
-    if(acc>0.15):
+    if(acc>1.4705):
       led.value(1)
       lcd.putstr("Dont Accelerate too much")
       sleep(1)
       lcd.clear()
+    if(speed>90):
+      led.value(1)
+      lcd.putstr("Speed is above \n 90km/hr")
+      sleep(1)
+      lcd.clear()
     if brake_push_button.value() == True:     # if brake pressed 
       count +=1
-    if accelerator_push_button.value() == True:     # if brake pressed 
+    if accelerator_push_button.value() == True:     # if accelerator not pressed for 30 secs
       idle_count +=1
-    if time.ticks_ms() - last_update >= UPDATE_TIME_INTERVAL:
-        if count>= 5:
-          count=0
-          led.value(1) 
-          lcd.putstr("Too much brakes Reduce speed")
-          sleep(2)
-          lcd.clear()    
-        print('Distance:', int(distance/100), 'm')
-        print('Acceleration:',acc)
-        if(distance>100):
-          print("Obstacle is at ",int(distance/100),"m")
-        if(acc>0.15):
-          print("Acceleration has exceeded 1.4705 m/s^2")
+    if count>= 5:
+      
+      led.value(1) 
+      lcd.putstr("Too much brakes Reduce speed")
+      sleep(2)
+      lcd.clear()  
+      count=0
+    if time.ticks_ms() - last_update >= UPDATE_TIME_INTERVAL:  
         bme_readings = {'field1':distance, 'field2':acc, 'field3':distance} 
         request = urequests.post( 'http://api.thingspeak.com/update?api_key=' + THINGSPEAK_WRITE_API_KEY, json = bme_readings, headers = HTTP_HEADERS )  
         request.close() 
+        
     if time.ticks_ms() - last_update >= ENGINE_IDLE_TIME_INTERVAL:
       if idle_count== 0 :
-          lcd.putstr("Switched off \nengine")
+          lcd.putstr("Switch off \nengine")
           sleep(2)
           lcd.clear() 
     led.value(0)

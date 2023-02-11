@@ -16,7 +16,7 @@
       "id": "ultrasonic1",
       "top": -97.7,
       "left": 80.07,
-      "attrs": { "distance": "2" }
+      "attrs": { "distance": "44" }
     },
     {
       "type": "wokwi-lcd1602",
