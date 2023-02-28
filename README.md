@@ -17,9 +17,9 @@ principle is violated. The driver assistance system must look out for the follow
  <br/>● Acceleration shouldn't exceed 1.4705 m/s2 
  <br/>● If the vehicle is idling (Idling is a working condition in which the engine is idling but does not output
 power, resulting in fuel consumption) for more than half a minute, recommend that the engine be
-switched off.  
-<br/>● The number of braking must be kept minimal.  
-<br/>● Detect obstacles ahead and suggest an optimal deceleration  
+switched off.
+<br/>● The number of braking must be kept minimal.
+<br/>● Detect obstacles ahead and suggest an optimal deceleration
 <br/>● Track the location of the vehicle. The driver assistance system must, at fixed intervals of time, transfer
 the vehicle’s above-mentioned parameters to a remote server. After processing the parameters, the
 remote server must alert the user when a principle is being violated on an application or make the
